@@ -1,0 +1,33 @@
+from urllib.parse import quote_plus
+
+import praw
+
+QUESTIONS = ['what is', 'who is', 'what are', 'keppie']
+#REPLY_TEMPLATE = 'Hallo, wat een leuke post zeg! {} keppieeeeeeeeee'
+REPLY_TEMPLATE = 'Hallo wat een leuke post zeg! Beep boop I am a keppiebot'
+
+def main():
+    reddit = praw.Reddit(user_agent='[user_agent]',
+                         client_id='[client_id]', client_secret='[client_secret]',
+                         username='[username]', password='[password]')
+
+    subreddit = reddit.subreddit('keppie')
+    for submission in subreddit.stream.submissions():
+        process_submission(submission)
+
+def process_submission(submission):
+
+    if submission.archived:
+    	return
+
+    normalized_title = submission.title.lower()
+
+    url_title = quote_plus(submission.title)
+    keppie_reply = submission.title
+    reply_text = REPLY_TEMPLATE.format(url_title)
+    reply_text2 = REPLY_TEMPLATE.format(keppie_reply)
+    print('Replying to: {}'.format(submission.title))
+    submission.reply(reply_text2)
+
+if __name__ == '__main__':
+    main()
